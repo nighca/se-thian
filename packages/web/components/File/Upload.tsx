@@ -6,6 +6,7 @@ import FileInput from './Input'
 import ItemList from './ItemList'
 import styles from './style.module.scss'
 
+// TODO: remove me
 const apiToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweENjMERkOTVDYjg2ZDI3MUZDMGQ0YjZmZTE1NjkyNjg5MzVGQzAwODkiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NTM1NTI1MzQ3MDAsIm5hbWUiOiJ0ZXN0In0.O8DmFYe40P7sBbIqM6-yeTCly9Db3b8_5fTIjcxyXHg'
 const client = new Web3Storage({ token: apiToken })
 

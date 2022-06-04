@@ -81,6 +81,7 @@ export default function FileInput({ onFile, loading = false }: Props) {
   )
 
   return (
+    // TODO: mobile style
     <div
       className={className}
       onDragOver={handleDragOver}

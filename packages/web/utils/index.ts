@@ -38,6 +38,7 @@ export type ItemStateInfo = (
 
 export type ItemWithState = Item & ItemStateInfo
 
+// TODO: more public gateways
 const ipfsGateway = 'https://cloudflare-ipfs.com/ipfs'
 
 export function getAccessUrl(cid: string, subPath?: string) {

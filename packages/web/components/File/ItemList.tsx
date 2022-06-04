@@ -18,6 +18,7 @@ export default function ItemList({ items }: Props) {
 
 function Item(item: ItemWithState) {
   const text = item.name + (item.type === ItemType.Directory ? '/' : '')
+  // TODO: upload progress
   const content = (
     item.state === ItemState.Done
     ? <a rel="noreferrer" target="_blank" href={getItemAccessUrl(item)}>{text}</a>
