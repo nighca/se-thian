@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Web3Storage } from 'web3.storage'
 
-import { ItemWithState, ItemType, ItemState, ItemStateInfo } from 'utils'
+import { ItemWithState, ItemType, ItemState, ItemStateInfo, Item } from 'utils'
 import FileInput from './Input'
 import ItemList from './ItemList'
 import styles from './style.module.scss'
@@ -28,13 +28,35 @@ function makeItem(files: File[]) {
   }
 }
 
-// const initialItems: ItemWithState[] = [
-//   {"type":ItemType.File,state:ItemState.Done,"name":"fabric.jpg","cid":"bafybeigkhhj2u5abblddpzwd7yqx6ncb5mznzk3l77nwmxmvq2t2wag6ua"},
-//   {"type":ItemType.Directory,state:ItemState.Done,"name":"TODO","cid":"bafybeibxujrsfiz5ptqlicq3cjg5lmmxf2g32p4dzhbiqm6gfc5xssfmdi"}
-// ]
+const itemsStorageKey = 'se-thian/storage/items'
+
+function useItems() {
+  const [items, setItems] = useState<ItemWithState[]>([])
+
+  useEffect(() => {
+    const saved = localStorage.getItem(itemsStorageKey)
+    if (saved == null) return
+    try {
+      const parsed: Item[] = JSON.parse(saved)
+      const itemsFromStorage: ItemWithState[] = parsed.map(
+        item => ({ ...item, state: ItemState.Done })
+      )
+      setItems(current => [...current, ...itemsFromStorage])
+    } catch (e) {
+      console.warn('Restore items from storage failed:', e)
+    }
+  }, [])
+
+  useEffect(() => {
+    const itemsToSave = items.filter(item => item.state === ItemState.Done)
+    localStorage.setItem(itemsStorageKey, JSON.stringify(itemsToSave))
+  }, [items])
+
+  return [items, setItems] as const
+}
 
 export default function FileUpload() {
-  const [items, setItems] = useState<ItemWithState[]>([])
+  const [items, setItems] = useItems()
 
   function addItem(item: ItemWithState) {
     setItems(v => [item, ...v])

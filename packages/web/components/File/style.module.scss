@@ -85,6 +85,20 @@ $mobile-max-width: 640px;
   }
 }
 
+.gatewaySelectWrapper {
+  text-align: center;
+  font-size: 13px;
+}
+
+.gatewaySelect {
+  margin-left: .5em;
+  border: none;
+
+  &:focus {
+    outline: none;
+  }
+}
+
 .itemList {
   margin: 1.5rem 0;
 

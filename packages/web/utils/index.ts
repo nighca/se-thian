@@ -38,15 +38,18 @@ export type ItemStateInfo = (
 
 export type ItemWithState = Item & ItemStateInfo
 
-// TODO: more public gateways
-const ipfsGateway = 'https://cloudflare-ipfs.com/ipfs'
+// https://ipfs.github.io/public-gateway-checker/
+export const ipfsGateways = [
+  'crustwebsites.net',
+  'cloudflare-ipfs.com'
+]
 
-export function getAccessUrl(cid: string, subPath?: string) {
-  return `${ipfsGateway}/${cid}${subPath ? `/${subPath}` : ''}`
+export function getAccessUrl(gateway: string, cid: string, subPath?: string) {
+  return `https://${gateway}/ipfs/${cid}${subPath ? `/${subPath}` : ''}`
 }
 
-export function getItemAccessUrl(item: ItemWithState) {
-  return getAccessUrl(item.cid)
+export function getItemAccessUrl(gateway: string, item: ItemWithState) {
+  return getAccessUrl(gateway, item.cid)
 }
 
 export function cns(...names: (string | null | boolean | undefined)[]) {

@@ -1,6 +1,6 @@
-import React, { SVGProps } from 'react'
+import React, { SVGProps, useState } from 'react'
 
-import { ItemType, ItemWithState, getItemAccessUrl, ItemStateInfo, ItemState } from 'utils'
+import { ItemType, ItemWithState, ipfsGateways, getItemAccessUrl, ItemStateInfo, ItemState } from 'utils'
 import styles from './style.module.scss'
 
 interface Props {
@@ -8,20 +8,52 @@ interface Props {
 }
 
 export default function ItemList({ items }: Props) {
+
+  const [gateway, setGateway] = useState(ipfsGateways[0])
+
   if (items.length <= 0) return null
+
   return (
-    <ul className={styles.itemList}>
-      {items.map((item, i) => <Item key={item.cid + i} {...item} />)}
-    </ul>
+    <>
+      <GatewaySelect value={gateway} onChange={setGateway} />
+      <ul className={styles.itemList}>
+        {items.map((item, i) => (
+          <Item key={item.cid + i} gateway={gateway} item={item} />
+        ))}
+      </ul>
+    </>
   )
 }
 
-function Item(item: ItemWithState) {
+interface GatewaySelectProps {
+  value: string
+  onChange: (v: string) => void
+}
+
+function GatewaySelect({ value, onChange }: GatewaySelectProps) {
+  return (
+    <div className={styles.gatewaySelectWrapper}>
+      Gateway:
+      <select className={styles.gatewaySelect} value={value} onChange={e => onChange(e.target.value)}>
+        {ipfsGateways.map(hostname => (
+          <option key={hostname} value={hostname}>{hostname}</option>
+        ))}
+      </select>
+    </div>
+  )
+}
+
+interface ItemProps {
+  item: ItemWithState
+  gateway: string
+}
+
+function Item({ item, gateway }: ItemProps) {
   const text = item.name + (item.type === ItemType.Directory ? '/' : '')
   // TODO: upload progress
   const content = (
     item.state === ItemState.Done
-    ? <a rel="noreferrer" target="_blank" href={getItemAccessUrl(item)}>{text}</a>
+    ? <a rel="noreferrer" target="_blank" href={getItemAccessUrl(gateway, item)}>{text}</a>
     : <span>{text}</span>
   )
   return (
