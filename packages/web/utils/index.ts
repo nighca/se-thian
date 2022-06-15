@@ -40,8 +40,25 @@ export type ItemWithState = Item & ItemStateInfo
 
 // https://ipfs.github.io/public-gateway-checker/
 export const ipfsGateways = [
+  'ipfs.io',
+  'dweb.link',
+  'gateway.ipfs.io',
+  'infura-ipfs.io',
+  'via0.com',
+  'ipfs.eternum.io',
+  'hardbin.com',
+  'cloudflare-ipfs.com',
+  'cf-ipfs.com',
+  'gateway.pinata.cloud',
+  'ipfs.telos.miami',
+  'ipfs.fleek.co',
+  'ipfs.azurewebsites.net',
+  'ipfs.mihir.ch',
   'crustwebsites.net',
-  'cloudflare-ipfs.com'
+  'ipfs.eth.aragon.network',
+  'nftstorage.link',
+  '4everland.io',
+  'ipfs-gateway.cloud'
 ]
 
 export function getAccessUrl(gateway: string, cid: string, subPath?: string) {

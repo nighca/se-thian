@@ -5,9 +5,10 @@ import styles from './style.module.scss'
 
 interface Props {
   items: ItemWithState[]
+  onRemove: (i: number) => void
 }
 
-export default function ItemList({ items }: Props) {
+export default function ItemList({ items, onRemove }: Props) {
 
   const [gateway, setGateway] = useState(ipfsGateways[0])
 
@@ -18,7 +19,12 @@ export default function ItemList({ items }: Props) {
       <GatewaySelect value={gateway} onChange={setGateway} />
       <ul className={styles.itemList}>
         {items.map((item, i) => (
-          <Item key={item.cid + i} gateway={gateway} item={item} />
+          <Item
+            key={item.cid + i}
+            item={item}
+            gateway={gateway}
+            onRemove={() => onRemove(i)}
+          />
         ))}
       </ul>
     </>
@@ -31,6 +37,7 @@ interface GatewaySelectProps {
 }
 
 function GatewaySelect({ value, onChange }: GatewaySelectProps) {
+  // TODO: Do check for gateways, see details in https://github.com/ipfs/public-gateway-checker
   return (
     <div className={styles.gatewaySelectWrapper}>
       Gateway:
@@ -46,9 +53,10 @@ function GatewaySelect({ value, onChange }: GatewaySelectProps) {
 interface ItemProps {
   item: ItemWithState
   gateway: string
+  onRemove: () => void
 }
 
-function Item({ item, gateway }: ItemProps) {
+function Item({ item, gateway, onRemove }: ItemProps) {
   const text = item.name + (item.type === ItemType.Directory ? '/' : '')
   // TODO: upload progress
   const content = (
@@ -60,13 +68,15 @@ function Item({ item, gateway }: ItemProps) {
     <li className={styles.item}>
       <ItemStateIcon {...item} />
       {content}
+      <i className={styles.removeIcon} title="Remove" onClick={onRemove}>x</i>
     </li>
   )
 }
 
-function ItemStateIcon({ state }: ItemStateInfo) {
-  if (state === ItemState.Uploading) return <IconLoading className={styles.stateIcon} />
-  return <IconCircle className={styles.stateIcon} />
+function ItemStateIcon(stateInfo: ItemStateInfo) {
+  if (stateInfo.state === ItemState.Done) return <IconCircle className={styles.stateIcon} />
+  // TODO: progress
+  return <IconLoading className={styles.stateIcon} />
 }
 
 function IconCircle(props: SVGProps<SVGSVGElement>) {

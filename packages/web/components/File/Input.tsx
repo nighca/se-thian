@@ -1,5 +1,6 @@
-import React, { ChangeEvent, ClipboardEvent, DragEvent, SVGProps, useRef, useState } from 'react'
+import React, { ChangeEvent, ClipboardEvent, SVGProps, useRef } from 'react'
 import { cns } from 'utils'
+import { useDrag } from 'hooks'
 
 import styles from './style.module.scss'
 
@@ -10,46 +11,22 @@ interface Props {
 
 export default function FileInput({ onFile, loading = false }: Props) {
 
-  const [dropActive, setDropActive] = useState(false)
+  const { droppable, ...dragHandlers } = useDrag(handleDataTransfer)
 
-  function handleDragEnter() {
-    setDropActive(true)
-  }
-
-  function handleDragLeave() {
-    setDropActive(false)
-  }
-
-  function handleDragOver(e: DragEvent<HTMLDivElement>) {
-    e.preventDefault()
-    console.log('drag over', e)
-  }
+  const rawInputRef = useRef<HTMLInputElement>(null)
 
   function handleDataTransfer(dataTransfer: DataTransfer) {
     const items = Array.from(dataTransfer.items || [])
-    console.log(items)
     const maybeFiles = items.filter(item => item.kind === 'file').map(item => item.getAsFile())
     const files = maybeFiles.filter(Boolean) as File[]
     if (files.length === 0) return
     onFile(files)
   }
 
-  function handleDrop(e: DragEvent<HTMLDivElement>) {
-    e.preventDefault()
-    setDropActive(false)
-    handleDataTransfer(e.dataTransfer)
-  }
-
-  const rawInputRef = useRef<HTMLInputElement>(null)
-
-  function handleSelect() {
-    if (!rawInputRef.current) return
-    rawInputRef.current.click()
-  }
-
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files || [])
     onFile(files)
+    rawInputRef.current!.value = '' // clear file input
   }
 
   function handlePaste(e: ClipboardEvent<HTMLDivElement>) {
@@ -57,42 +34,50 @@ export default function FileInput({ onFile, loading = false }: Props) {
     handleDataTransfer(e.clipboardData)
   }
 
+  function handleSelectorClick() {
+    if (!rawInputRef.current) return
+    rawInputRef.current.click()
+  }
+
   const className = cns(
     styles.fileInput,
-    dropActive && styles.dropActive,
+    droppable && styles.droppable,
     loading && styles.loading
   )
 
-  const labelContent = (
+  const selector = (
+    <span
+      className={styles.selector}
+      onClick={handleSelectorClick}
+    >Select</span>
+  )
+
+  const inputLabel = (
     <>
-      <span className={styles.nonDrop}>
-        <span className={styles.selector} onClick={handleSelect}>Select</span>
-        , Paste or&nbsp;
-      </span>
-      <span className={styles.drop}>Drop files here.</span>
+      <p className={styles.pcLabel}>
+        <span className={styles.nonDrop}>{selector}, Paste or&nbsp;</span>
+        <span className={styles.drop}>Drop files here.</span>
+      </p>
+      <p className={styles.mobileLabel}>
+        {selector} files.
+      </p>
     </>
   )
 
-  const loadingLabelContent = (
-    <>
+  const loadingLabel = (
+    <p className={styles.label}>
       <IconLoading className={styles.icon} />
       Processing...
-    </>
+    </p>
   )
 
   return (
-    // TODO: mobile style
     <div
       className={className}
-      onDragOver={handleDragOver}
-      onDragEnter={handleDragEnter}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
       onPaste={handlePaste}
+      {...dragHandlers}
     >
-      <p className={styles.label}>
-        {loading ? loadingLabelContent : labelContent}
-      </p>
+      {loading ? loadingLabel : inputLabel}
       <input
         ref={rawInputRef}
         type="file"

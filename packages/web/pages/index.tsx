@@ -9,7 +9,7 @@ const Home: NextPage = () => {
     <div className={styles.container}>
       <Head>
         <title>Se Thian</title>
-        <meta name="description" content="Se Thian is a static-file service based on Web3 Storage." />
+        <meta name="description" content="Se Thian is a file storage service based on Web3 Storage." />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
@@ -19,7 +19,7 @@ const Home: NextPage = () => {
         </h1>
 
         <p className={styles.description}>
-          <a href="https://github.com/nighca/se-thian">Se Thian</a> is a static-file service based on&nbsp;
+          <a href="https://github.com/nighca/se-thian">Se Thian</a> is a file storage service based on&nbsp;
           <a
             target="_blank"
             rel="noreferrer"
